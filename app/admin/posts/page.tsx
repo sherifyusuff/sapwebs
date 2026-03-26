@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, Suspense } from "react"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -30,7 +30,7 @@ import {
 import { adminGetBlogs, adminDeleteBlog } from "@/lib/admin-actions"
 import type { Blog } from "@/lib/database.types"
 
-export default function PostsPage() {
+function PostsContent() {
   const searchParams = useSearchParams()
   const [posts, setPosts] = useState<Blog[]>([])
   const [categories, setCategories] = useState<string[]>([])
@@ -289,5 +289,17 @@ export default function PostsPage() {
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+export default function PostsPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex h-64 items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#0a3d62] border-t-transparent" />
+      </div>
+    }>
+      <PostsContent />
+    </Suspense>
   )
 }
