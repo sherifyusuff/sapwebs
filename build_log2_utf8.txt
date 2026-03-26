@@ -1,0 +1,61 @@
+﻿
+> my-project@0.1.0 build
+> next build
+
+Γû▓ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local
+
+  Creating an optimized production build ...
+Γ£ô Compiled successfully in 7.2s
+  Skipping validation of types
+  Collecting page data using 7 workers ...
+[Resend Contact] Configuration - Sender: onboarding@resend.dev
+[Resend Contact] Configuration - Recipients: [ 'info@sapwebs.com' ]
+[Resend Contact] Configuration - Verified email: info@sapwebs.com
+  Generating static pages using 7 workers (0/16) ...
+  Generating static pages using 7 workers (4/16) 
+  Generating static pages using 7 workers (8/16) 
+[Resend Contact] Configuration - Sender: onboarding@resend.dev
+[Resend Contact] Configuration - Recipients: [ 'info@sapwebs.com' ]
+[Resend Contact] Configuration - Verified email: info@sapwebs.com
+node.exe : Error occurred 
+prerendering page 
+"/login". Read more: https
+://nextjs.org/docs/message
+s/prerender-error
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" "C:
+\Users\DELL\AppData\Roamin
+g\n ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo        
+      : NotSpecified: (E  
+  rror occurred ...prer   
+ ender-error:String) [    
+], RemoteException
+    + FullyQualifiedError 
+   Id : NativeCommandErr  
+  or
+ 
+Error: useLanguage must 
+be used within a 
+LanguageProvider
+    at g (C:\Users\DELL\Do
+cuments\github\sapwebs\.ne
+xt\server\chunks\ssr\_90db
+2959._.js:1:20401)
+    at r (C:\Users\DELL\Do
+cuments\github\sapwebs\.ne
+xt\server\chunks\ssr\_90db
+2959._.js:3:10137) {
+  digest: '1612586530'
+}
+Export encountered an 
+error on /login/page: 
+/login, exiting the build.
+Γ¿» Next.js build worker 
+exited with code: 1 and 
+signal: null

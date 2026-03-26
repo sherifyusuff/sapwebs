@@ -1,0 +1,2 @@
+﻿lib/blog/storage.ts(203,8): error TS2304: Cannot find name 'isBrowser'.
+lib/blog/storage.ts(322,8): error TS2304: Cannot find name 'isBrowser'.

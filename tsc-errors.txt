@@ -1,0 +1,9 @@
+components/admin/post-form.tsx(86,35): error TS2551: Property 'categoryId' does not exist on type 'Partial<BlogPost>'. Did you mean 'category'?
+components/admin/post-form.tsx(87,63): error TS2353: Object literal may only specify known properties, and 'categoryId' does not exist in type 'SetStateAction<Partial<BlogPost>>'.
+components/admin/post-form.tsx(144,33): error TS2339: Property 'metaDescription' does not exist on type 'Partial<BlogPost>'.
+components/admin/post-form.tsx(145,61): error TS2353: Object literal may only specify known properties, and 'metaDescription' does not exist in type 'SetStateAction<Partial<BlogPost>>'.
+components/admin/post-form.tsx(156,33): error TS2339: Property 'metaKeywords' does not exist on type 'Partial<BlogPost>'.
+components/admin/post-form.tsx(157,61): error TS2353: Object literal may only specify known properties, and 'metaKeywords' does not exist in type 'SetStateAction<Partial<BlogPost>>'.
+lib/blog/storage.ts(203,8): error TS2304: Cannot find name 'isBrowser'.
+lib/blog/storage.ts(322,8): error TS2304: Cannot find name 'isBrowser'.
+

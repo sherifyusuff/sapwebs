@@ -1,0 +1,128 @@
+﻿
+> my-project@0.1.0 build
+> next build
+
+Γû▓ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local
+
+  Creating an optimized production build ...
+Γ£ô Compiled successfully in 5.2s
+  Skipping validation of types
+  Collecting page data using 7 workers ...
+[Resend Contact] Configuration - Sender: onboarding@resend.dev
+[Resend Contact] Configuration - Recipients: [ 'info@sapwebs.com' ]
+[Resend Contact] Configuration - Verified email: info@sapwebs.com
+  Generating static pages using 7 workers (0/16) ...
+node.exe : Γ¿» 
+useSearchParams() 
+should be wrapped in 
+a suspense boundary 
+at page 
+"/admin/posts". Read 
+more: https://nextjs.o
+rg/docs/messages/missi
+ng-suspense-with-csr-b
+ailout
+At line:1 char:1
++ & "C:\Program Files\
+nodejs/node.exe" "C:\U
+sers\DELL\AppData\Roam
+ing\n ...
++ ~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~
+    + CategoryInfo    
+          : 
+NotSpecified: (Γ    
+¿» useSearchPa...ith- 
+   
+csr-bailout:String) [ 
+   ], RemoteException
+    + 
+FullyQualifiedError   
+ Id : 
+NativeCommandErr    or
+ 
+    at Q (C:\Users\DEL
+L\Documents\github\sap
+webs\.next\server\chun
+ks\ssr\node_modules_ne
+xt_920e7746._.js:2:211
+1)
+    at o (C:\Users\DEL
+L\Documents\github\sap
+webs\.next\server\chun
+ks\ssr\node_modules_ne
+xt_920e7746._.js:4:528
+4)
+    at bu (C:\Users\DE
+LL\Documents\github\sa
+pwebs\.next\server\chu
+nks\ssr\app_admin_post
+s_page_tsx_5859a51e._.
+js:1:27522)
+    at an (C:\Users\DE
+LL\Documents\github\sa
+pwebs\node_modules\nex
+t\dist\compiled\next-s
+erver\app-page-turbo.r
+untime.prod.js:2:84360
+)
+    at ai (C:\Users\DE
+LL\Documents\github\sa
+pwebs\node_modules\nex
+t\dist\compiled\next-s
+erver\app-page-turbo.r
+untime.prod.js:2:86179
+)
+    at al (C:\Users\DE
+LL\Documents\github\sa
+pwebs\node_modules\nex
+t\dist\compiled\next-s
+erver\app-page-turbo.r
+untime.prod.js:2:10795
+3)
+    at as (C:\Users\DE
+LL\Documents\github\sa
+pwebs\node_modules\nex
+t\dist\compiled\next-s
+erver\app-page-turbo.r
+untime.prod.js:2:10536
+8)
+    at aa (C:\Users\DE
+LL\Documents\github\sa
+pwebs\node_modules\nex
+t\dist\compiled\next-s
+erver\app-page-turbo.r
+untime.prod.js:2:84712
+)
+    at ai (C:\Users\DE
+LL\Documents\github\sa
+pwebs\node_modules\nex
+t\dist\compiled\next-s
+erver\app-page-turbo.r
+untime.prod.js:2:86228
+)
+    at ai (C:\Users\DE
+LL\Documents\github\sa
+pwebs\node_modules\nex
+t\dist\compiled\next-s
+erver\app-page-turbo.r
+untime.prod.js:2:10470
+8)
+Error occurred 
+prerendering page 
+"/admin/posts". Read 
+more: https://nextjs.o
+rg/docs/messages/prere
+nder-error
+Export encountered an 
+error on 
+/admin/posts/page: 
+/admin/posts, exiting 
+the build.
+Γ¿» Next.js build 
+worker exited with 
+code: 1 and signal: 
+null

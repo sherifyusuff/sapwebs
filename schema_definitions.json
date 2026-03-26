@@ -1,0 +1,33 @@
+{
+  "name": {
+    "format": "text",
+    "type": "string"
+  },
+  "id": {
+    "default": "gen_random_uuid()",
+    "description": "Note:\nThis is a Primary Key.<pk/>",
+    "format": "uuid",
+    "type": "string"
+  },
+  "email": {
+    "format": "text",
+    "type": "string"
+  },
+  "phone": {
+    "format": "text",
+    "type": "string"
+  },
+  "subject": {
+    "format": "text",
+    "type": "string"
+  },
+  "message": {
+    "format": "text",
+    "type": "string"
+  },
+  "created_at": {
+    "default": "2026-03-12 20:11:45.132735+00",
+    "format": "timestamp with time zone",
+    "type": "string"
+  }
+}
