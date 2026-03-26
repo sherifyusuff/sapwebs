@@ -5,8 +5,8 @@ export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
 
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_URL || "http://127.0.0.1:54321",
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "placeholder",
     {
       cookies: {
         getAll() {
@@ -26,9 +26,13 @@ export async function proxy(request: NextRequest) {
   )
 
   // Refresh session so it doesn't expire
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  let user = null;
+  try {
+    const { data } = await supabase.auth.getUser()
+    user = data.user
+  } catch (error) {
+    console.error("Supabase middleware auth error:", error)
+  }
 
   const isAdminPath = request.nextUrl.pathname.startsWith("/admin")
   const isLoginPage = request.nextUrl.pathname === "/admin/login"
