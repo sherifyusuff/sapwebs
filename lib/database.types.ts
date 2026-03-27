@@ -27,6 +27,7 @@ export interface Contact {
   name: string
   email: string
   phone: string | null
+  service: string
   message: string
   status: "read" | "unread"
   created_at: string

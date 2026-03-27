@@ -29,9 +29,9 @@ const footerLinks = {
 }
 
 const socialLinks = [
-  { icon: Facebook, href: "https://facebook.com/sapwebs", label: "Facebook", hoverBg: "hover:bg-[#1877F2]" },
-  { icon: Instagram, href: "https://instagram.com/sapwebs", label: "Instagram", hoverBg: "hover:bg-[#E4405F]" },
-  { icon: Linkedin, href: "https://www.linkedin.com/company/sapwebs/", label: "LinkedIn", hoverBg: "hover:bg-[#0A66C2]" },
+  { icon: Facebook, href: "https://web.facebook.com/sapwebsagency", label: "Facebook", hoverBg: "hover:bg-[#1877F2]" },
+  { icon: Instagram, href: "https://www.instagram.com/sapwebsagency", label: "Instagram", hoverBg: "hover:bg-[#E4405F]" },
+  { icon: Linkedin, href: "https://www.linkedin.com/company/sapwebsagency/", label: "LinkedIn", hoverBg: "hover:bg-[#0A66C2]" },
 ]
 
 export function Footer() {

@@ -33,16 +33,16 @@ export function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b-2 border-[#87ceeb]/40 bg-gradient-to-r from-[#e0f2fc] via-[#eaf6fd] to-[#d6eefb] shadow-lg shadow-[#87ceeb]/10 backdrop-blur-md">
-      <div className="container mx-auto flex h-16 items-center justify-between px-3 sm:h-24 md:h-32 md:px-4 lg:h-36">
+    <header className="sticky top-0 z-50 w-full border-b-2 border-[#87ceeb]/40 bg-gradient-to-r from-[#e0f2fc] via-[#eaf6fd] to-[#d6eefb] shadow-lg shadow-[#87ceeb]/10 backdrop-blur-md transition-all duration-300">
+      <div className="container mx-auto flex h-32 items-center justify-between px-3 sm:h-36 md:h-44 lg:h-52 md:px-4">
         {/* Logo */}
         <Link href="/" className="flex shrink-0 items-center transition-transform duration-300 hover:scale-105">
           <Image
             src="/sapwebs-logo.png"
             alt="Sapwebs Logo"
-            width={600}
-            height={180}
-            className="h-10 drop-shadow-lg sm:h-16 md:h-24 lg:h-32"
+            width={800}
+            height={240}
+            className="h-24 drop-shadow-lg sm:h-28 md:h-36 lg:h-44"
             style={{ width: 'auto' }}
             priority
             loading="eager"

@@ -160,8 +160,14 @@ function MessagesContent() {
                         &lt;{msg.email}&gt;
                       </a>
                     </div>
+                    <div className="mt-1 flex items-center gap-2">
+                      <span className="text-xs font-semibold uppercase text-gray-500">Service:</span>
+                      <span className="text-xs text-[#0a3d62] font-medium">
+                        {msg.service || (msg.message.startsWith('[Service:') ? msg.message.split(']')[0].replace('[Service:', '').trim() : 'N/A')}
+                      </span>
+                    </div>
                     <p className={`mt-2 text-sm ${msg.status === 'unread' ? 'text-black font-medium' : 'text-gray-800'}`}>
-                      {msg.message}
+                      {msg.message.startsWith('[Service:') ? msg.message.split(']\n\n')[1] || msg.message : msg.message}
                     </p>
                     <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-gray-400">
                       <span>{typeof window !== 'undefined' ? new Date(msg.created_at).toLocaleString() : ''}</span>

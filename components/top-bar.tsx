@@ -15,12 +15,10 @@ export function TopBar() {
           >
             <MessageCircle className="h-3 w-3" />
             <span className="hidden sm:inline">+234 703 532 1179</span>
-            <span className="sm:hidden">WhatsApp</span>
           </a>
           <a href="mailto:info@sapwebs.com" className="flex shrink-0 items-center gap-1.5 transition-colors hover:text-[#87ceeb]">
             <Mail className="h-3 w-3" />
             <span className="hidden md:inline">info@sapwebs.com</span>
-            <span className="md:hidden">Email</span>
           </a>
           <span className="hidden items-center gap-1.5 lg:flex">
             <MapPin className="h-3 w-3" />
@@ -31,7 +29,7 @@ export function TopBar() {
         {/* Social icons */}
         <div className="flex shrink-0 items-center gap-2">
           <a
-            href="https://www.facebook.com/sapwebsagency"
+            href="https://web.facebook.com/sapwebsagency"
             target="_blank"
             rel="noopener noreferrer"
             className="flex h-6 w-6 items-center justify-center rounded-full bg-white/10 transition-all duration-300 hover:bg-[#1877F2] hover:scale-110"
