@@ -34,15 +34,15 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-[#87ceeb]/40 bg-gradient-to-r from-[#e0f2fc] via-[#eaf6fd] to-[#d6eefb] shadow-md shadow-[#87ceeb]/10 backdrop-blur-md transition-all duration-300">
-      <div className="container mx-auto flex h-24 items-center justify-between px-3 sm:h-28 md:h-32 lg:h-36 md:px-4">
+      <div className="container mx-auto flex h-22 items-center justify-between px-3 sm:h-26 md:h-30 lg:h-34 md:px-4">
         {/* Logo */}
         <Link href="/" className="flex shrink-0 items-center transition-transform duration-300 hover:scale-105">
           <Image
             src="/sapwebs-logo.png"
             alt="Sapwebs Logo"
-            width={750}
-            height={225}
-            className="h-18 drop-shadow-lg sm:h-22 md:h-26 lg:h-30"
+            width={720}
+            height={216}
+            className="h-16 drop-shadow-lg sm:h-20 md:h-24 lg:h-28"
             style={{ width: 'auto' }}
             priority
             loading="eager"
