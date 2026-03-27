@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
+import { z } from 'zod'
+import DOMPurify from 'isomorphic-dompurify'
 
 // Configuration
 const RESEND_API_KEY = process.env.RESEND_API_KEY
@@ -9,162 +11,91 @@ const NEWSLETTER_EMAIL_TO = 'info@sapwebs.com'
 // Initialize Resend
 const resend = RESEND_API_KEY ? new Resend(RESEND_API_KEY) : null
 
-// Email validation
-const isValidEmail = (email: string): boolean => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  return emailRegex.test(email)
+// Validation Schema
+const NewsletterSchema = z.object({
+  email: z.string().email("Invalid email address").max(255),
+})
+
+// Rate limiting (In-memory)
+const requestMap = new Map<string, number[]>()
+const isRateLimited = (ip: string, maxRequests: number = 5, windowMs: number = 3600000): boolean => {
+  const now = Date.now()
+  const requests = requestMap.get(ip) || []
+  const recentRequests = requests.filter((time) => now - time < windowMs)
+  if (recentRequests.length >= maxRequests) return true
+  recentRequests.push(now)
+  requestMap.set(ip, recentRequests)
+  return false
 }
 
 export async function POST(request: NextRequest) {
+  console.log('>>> [Newsletter API v2.2-SECURE] Subscription Received')
+  
   try {
-    // Validate Resend API key
+    // 1. Rate Limiting
+    const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
+    if (isRateLimited(ip)) {
+      return NextResponse.json(
+        { error: 'Too many requests. Please try again later.' },
+        { status: 429 }
+      )
+    }
+
+    // 2. Validate Resend API key
     if (!RESEND_API_KEY || !resend) {
       console.error('[Newsletter] Missing RESEND_API_KEY')
-      return NextResponse.json(
-        { error: 'Email service is not configured.' },
-        { status: 503 }
-      )
+      return NextResponse.json({ error: 'service configuration error' }, { status: 503 })
     }
 
-    const { email } = await request.json()
+    // 3. Body Validation
+    const body = await request.json()
+    const result = NewsletterSchema.safeParse(body)
 
-    // Validation
-    if (!email?.trim()) {
-      console.warn('[Newsletter] Empty email submitted')
-      return NextResponse.json(
-        { error: 'Email address is required.' },
-        { status: 400 }
-      )
+    if (!result.success) {
+      return NextResponse.json({ error: result.error.errors[0].message }, { status: 400 })
     }
 
-    if (!isValidEmail(email)) {
-      console.warn(`[Newsletter] Invalid email format: ${email}`)
-      return NextResponse.json(
-        { error: 'Please enter a valid email address.' },
-        { status: 400 }
-      )
-    }
+    const { email } = result.data
+    const sanitizedEmail = DOMPurify.sanitize(email)
 
-    // Send confirmation email to subscriber
+    // 4. Send confirmation email to subscriber
     const subscriberEmailHtml = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <meta charset="utf-8">
-          <style>
-            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; }
-            .container { max-width: 600px; margin: 20px auto; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-            .header { background: linear-gradient(135deg, #0a3d62 0%, #1a5f8a 100%); color: white; padding: 40px 30px; text-align: center; }
-            .header h2 { margin: 0; font-size: 28px; }
-            .content { padding: 30px; }
-            .content p { font-size: 15px; line-height: 1.6; color: #333; margin-bottom: 15px; }
-            .highlight { color: #0a3d62; font-weight: bold; }
-            .footer { background: #f5f5f5; padding: 20px 30px; border-top: 1px solid #ddd; font-size: 13px; color: #666; text-align: center; }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="header">
-              <h2>Welcome to Sapwebs Newsletter!</h2>
-            </div>
-            <div class="content">
-              <p>Thank you for subscribing to our newsletter!</p>
-              <p>You'll now receive the latest updates, news, and exclusive offers from <span class="highlight">Sapwebs</span>.</p>
-              <p style="background: #f9f9f9; padding: 15px; border-left: 4px solid #87ceeb; border-radius: 4px; margin: 20px 0;">
-                Stay tuned for valuable insights on web design, development, and digital solutions tailored for your business success.
-              </p>
-              <p>If you have any questions or need any assistance, feel free to reach out to us at <span class="highlight">info@sapwebs.com</span>.</p>
-            </div>
-            <div class="footer">
-              <p>© 2026 Sapwebs. All Rights Reserved.</p>
-              <p>This email confirms your newsletter subscription. You can unsubscribe anytime if you wish.</p>
-            </div>
-          </div>
-        </body>
-      </html>
+      <div style="font-family: sans-serif; max-width: 600px; color: #333;">
+        <h2 style="color: #0a3d62;">Welcome to Sapwebs!</h2>
+        <p>Thank you for subscribing to our newsletter.</p>
+        <p>You'll now receive the latest updates on web design, development, and digital strategy.</p>
+        <p>Best Regards,<br><strong>The Sapwebs Team</strong></p>
+      </div>
     `
 
     // Send confirmation to subscriber
-    console.log('[Newsletter] Sending confirmation to subscriber:', email)
     const subscriberResult = await resend.emails.send({
       from: CONTACT_EMAIL_FROM,
-      to: email,
+      to: sanitizedEmail,
       subject: 'Welcome to Sapwebs Newsletter',
       html: subscriberEmailHtml,
     })
 
     if (subscriberResult.error) {
       console.error('[Newsletter] Failed to send subscriber email:', subscriberResult.error)
-      return NextResponse.json(
-        { error: 'Failed to process subscription. Please try again later.' },
-        { status: 500 }
-      )
+      return NextResponse.json({ error: 'failed to process subscription' }, { status: 500 })
     }
 
-    console.log('[Newsletter] Subscriber confirmation sent. ID:', subscriberResult.data?.id)
-
-    // Send notification to admin
-    const adminNotificationHtml = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <meta charset="utf-8">
-          <style>
-            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; }
-            .container { max-width: 600px; margin: 20px auto; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-            .header { background: linear-gradient(135deg, #0a3d62 0%, #1a5f8a 100%); color: white; padding: 30px; }
-            .content { padding: 30px; }
-            .field { margin-bottom: 15px; }
-            .label { color: #0a3d62; font-weight: bold; font-size: 14px; }
-            .value { color: #333; font-size: 15px; }
-            .footer { background: #f5f5f5; padding: 20px 30px; border-top: 1px solid #ddd; font-size: 12px; color: #666; }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="header">
-              <h2>New Newsletter Subscription</h2>
-            </div>
-            <div class="content">
-              <div class="field">
-                <div class="label">Email Address</div>
-                <div class="value">${email}</div>
-              </div>
-              <div class="field">
-                <div class="label">Subscription Date</div>
-                <div class="value">${new Date().toISOString()}</div>
-              </div>
-            </div>
-            <div class="footer">
-              <p>A new subscriber has joined your Sapwebs newsletter list.</p>
-            </div>
-          </div>
-        </body>
-      </html>
-    `
-
-    // Send notification to admin
-    console.log('[Newsletter] Sending admin notification to:', NEWSLETTER_EMAIL_TO)
+    // 5. Send notification to admin
     await resend.emails.send({
       from: CONTACT_EMAIL_FROM,
       to: NEWSLETTER_EMAIL_TO,
-      subject: `New Newsletter Subscription: ${email}`,
-      html: adminNotificationHtml,
+      subject: `New Newsletter Subscription: ${sanitizedEmail}`,
+      html: `<p>New subscriber: <strong>${sanitizedEmail}</strong></p><p>Date: ${new Date().toISOString()}</p>`,
     })
 
-    return NextResponse.json(
-      {
-        success: true,
-        message: 'Thank you for subscribing! Check your email for confirmation.',
-      },
-      { status: 200 }
-    )
+    return NextResponse.json({
+      success: true,
+      message: 'Thank you for subscribing! Check your email for confirmation.',
+    })
+
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-    console.error('[Newsletter] Unexpected error:', errorMessage)
-    return NextResponse.json(
-      { error: 'An unexpected error occurred. Please try again later.' },
-      { status: 500 }
-    )
+    console.error('[Newsletter] Critical Error:', error)
+    return NextResponse.json({ error: 'an unexpected security event occurred' }, { status: 500 })
   }
 }
