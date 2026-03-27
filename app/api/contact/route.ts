@@ -38,6 +38,7 @@ const isHoneypotFilled = (honeypot: string): boolean => {
 }
 
 export async function POST(request: NextRequest) {
+  console.log('>>> [Contact API v2.1-DEBUG] Submission Received at', new Date().toISOString())
   try {
     // Get client IP for rate limiting
     const ip =
