@@ -81,23 +81,31 @@ export async function POST(request: NextRequest) {
     }
 
     // Execute database insert
-    console.log('[Contact API] Saving to Supabase (contact_messages)...')
+    console.log('[Contact API] Target Table: contact_messages')
+    console.log('[Contact API] Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL?.substring(0, 20) + '...')
     
     // Combine service and message to ensure no loss of data if column is missing
     const fullMessage = `[Service: ${service}]\n\n${message}`
 
-    const dbPromise = supabaseAdmin.from('contact_messages').insert([{
+    const { data: dbData, error: dbError } = await supabaseAdmin.from('contact_messages').insert([{
       name,
       email,
       phone: phone || null,
       message: fullMessage,
       status: 'unread'
-    }])
+    }]).select()
+
+    console.log('[Contact API] Supabase Response:', { 
+      success: !dbError, 
+      error: dbError ? dbError.message : null,
+      rowCount: dbData?.length || 0 
+    })
 
     let emailSent = false
     let emailError = null
 
     if (resend) {
+      console.log('[Contact API] Attempting to send email via Resend...')
       try {
         // Prepare email content
         const adminEmailHtml = `
@@ -139,6 +147,7 @@ export async function POST(request: NextRequest) {
           })
         ])
         emailSent = true
+        console.log('[Contact API] Emails sent successfully')
       } catch (err) {
         console.error('[Contact API] Resend error:', err)
         emailError = err instanceof Error ? err.message : 'Email failed'
@@ -147,9 +156,6 @@ export async function POST(request: NextRequest) {
       console.warn('[Contact API] Resend API key is missing.')
       emailError = 'Email service is not configured.'
     }
-
-    // Wait for DB to finish
-    const { error: dbError } = await dbPromise
 
     if (dbError) {
       console.error('[Contact API] Supabase error:', dbError)
@@ -191,4 +197,5 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     )
   }
+}
 }
