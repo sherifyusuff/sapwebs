@@ -4,7 +4,7 @@ import { supabaseAdmin } from '@/lib/supabase-server'
 
 // Configuration from environment variables
 const RESEND_API_KEY = process.env.RESEND_API_KEY
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'info@sapwebs.com'
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || process.env.RESEND_VERIFIED_EMAIL || 'info@sapwebs.com'
 
 // Initialize Resend
 const resend = RESEND_API_KEY ? new Resend(RESEND_API_KEY) : null
