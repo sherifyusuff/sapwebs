@@ -3,9 +3,12 @@
 import { MessageCircle } from "lucide-react"
 import { useState, useEffect } from "react"
 
+const CONSENT_KEY = "sapwebs-cookie-consent-v1"
+
 export function WhatsAppButton() {
   const [isVisible, setIsVisible] = useState(false)
   const [isPulsing, setIsPulsing] = useState(true)
+  const [bannerVisible, setBannerVisible] = useState(false)
 
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), 1500)
@@ -19,12 +22,34 @@ export function WhatsAppButton() {
     return () => clearInterval(interval)
   }, [])
 
+  // Check if cookie banner is still showing (no consent given yet)
+  useEffect(() => {
+    const saved = localStorage.getItem(CONSENT_KEY)
+    if (!saved) {
+      // Banner will appear after 1.5s delay, match it
+      const timer = setTimeout(() => setBannerVisible(true), 1500)
+      return () => clearTimeout(timer)
+    }
+  }, [])
+
+  // Listen for consent updates to move the button back down
+  useEffect(() => {
+    const handleConsentUpdate = () => {
+      setBannerVisible(false)
+    }
+    window.addEventListener("cookie-consent-updated", handleConsentUpdate)
+    return () => window.removeEventListener("cookie-consent-updated", handleConsentUpdate)
+  }, [])
+
   return (
     <a
       href="https://wa.me/2347035321179?text=Hello%20Sapwebs%2C%20I%27m%20interested%20in%20your%20services."
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat with us on WhatsApp"
+      style={{
+        bottom: bannerVisible ? "120px" : undefined,
+      }}
       className={`fixed bottom-6 right-6 z-[9999] flex items-center gap-3 rounded-full bg-[#25D366] p-0 text-white shadow-2xl transition-all duration-500 hover:scale-110 hover:shadow-[0_0_30px_rgba(37,211,102,0.5)] md:bottom-8 md:right-8 ${
         isVisible ? "translate-y-0 opacity-100" : "translate-y-20 opacity-0"
       }`}
