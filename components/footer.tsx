@@ -23,7 +23,8 @@ const footerLinks = {
   support: [
     { label: "Contact", href: "#contact" },
     { label: "FAQs", href: "#" },
-    { label: "Privacy Policy", href: "#" },
+    { label: "Privacy Policy", href: "/privacy-policy" },
+    { label: "Cookie Policy", href: "/cookie-policy" },
     { label: "Terms of Service", href: "#" },
   ],
 }
@@ -143,6 +144,14 @@ export function Footer() {
                   </Link>
                 </li>
               ))}
+              <li>
+                <button 
+                  onClick={() => window.dispatchEvent(new CustomEvent("open-cookie-settings"))}
+                  className="text-xs text-white/70 transition-colors hover:text-[#87ceeb] sm:text-sm text-left"
+                >
+                  Cookie Settings
+                </button>
+              </li>
             </ul>
           </div>
         </div>

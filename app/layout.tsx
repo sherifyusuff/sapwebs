@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Toaster } from 'sonner'
 import Script from 'next/script'
+import { CookieConsent } from '@/components/cookie-consent'
 import './globals.css'
 
 const _geist = Geist({ subsets: ['latin'] })
@@ -153,6 +154,7 @@ export default function RootLayout({
       <body className="font-sans antialiased">
         {children}
         <Toaster position="top-right" richColors />
+        <CookieConsent />
       </body>
     </html>
   )
