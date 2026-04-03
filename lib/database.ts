@@ -10,13 +10,12 @@ export async function getBlogs(filters?: {
   limit?: number
   offset?: number
 }) {
-  let query = supabase
+  let query = supabaseAdmin
     .from("blogs")
     .select("*, category:categories(*)", { count: "exact" })
 
-  if (filters?.published !== undefined) {
-    query = query.eq("published", filters.published)
-  }
+  // Always enforce published=true for public access
+  query = query.eq("published", true)
 
   if (filters?.limit) {
     query = query.limit(filters.limit)
@@ -38,7 +37,7 @@ export async function getBlogs(filters?: {
 }
 
 export async function getBlogBySlug(slug: string) {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from("blogs")
     .select("*, category:categories(*)")
     .eq("slug", slug)
@@ -50,10 +49,11 @@ export async function getBlogBySlug(slug: string) {
 }
 
 export async function getBlogById(id: string) {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from("blogs")
     .select("*, category:categories(*)")
     .eq("id", id)
+    .eq("published", true)
     .single()
 
   if (error && error.code !== "PGRST116") throw error
