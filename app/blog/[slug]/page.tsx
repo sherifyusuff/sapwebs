@@ -1,94 +1,77 @@
-"use client"
-
-import { useEffect, useState } from "react"
-import Link from "next/link"
-import { useParams } from "next/navigation"
-import { ArrowLeft, Calendar, Tag, User, Loader2 } from "lucide-react"
+import { Metadata } from 'next'
+import Link from 'next/link'
+import { notFound } from 'next/navigation'
+import { ArrowLeft, Calendar, Tag, User } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { getBlogBySlug } from '@/lib/database'
-import type { Blog } from '@/lib/database.types'
+import SocialShare from '@/components/social-share'
 
-export default function BlogPostPage() {
-  const params = useParams<{ slug: string | string[] }>()
-  const slug = Array.isArray(params?.slug) ? params.slug[0] : params?.slug
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params
+  const post = await getBlogBySlug(slug)
 
-  const [post, setPost] = useState<Blog | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [notFoundFlag, setNotFoundFlag] = useState(false)
+  if (!post) {
+    return {
+      title: 'Post Not Found | Sapwebs',
+    }
+  }
 
-  useEffect(() => {
-    let isMounted = true
+  const title = `${post.title} | Sapwebs Blog`
+  const description = post.excerpt || `Read about ${post.title} on the Sapwebs blog.`
+  const url = `https://sapwebs.com/blog/${slug}`
 
-    const loadPost = async () => {
-      try {
-        if (!slug || typeof slug !== 'string') {
-          if (isMounted) {
-            setNotFoundFlag(true)
-            setIsLoading(false)
-          }
-          return
-        }
+  // Base OG setup
+  const openGraph: any = {
+    title: post.title,
+    description: description,
+    url: url,
+    siteName: 'Sapwebs',
+    type: 'article',
+    publishedTime: post.created_at,
+  }
+  
+  // Base Twitter setup
+  const twitter: any = {
+    card: 'summary_large_image',
+    title: post.title,
+    description: description,
+  }
 
-        const foundPost = await getBlogBySlug(slug)
-
-        if (!foundPost) {
-          if (isMounted) {
-            setPost(null)
-            setNotFoundFlag(true)
-            setIsLoading(false)
-          }
-          return
-        }
-
-        if (isMounted) {
-          setPost(foundPost)
-          setIsLoading(false)
-        }
-      } catch (error) {
-        console.error('Error loading post:', error)
-        if (isMounted) {
-          setNotFoundFlag(true)
-          setIsLoading(false)
-        }
+  if (post.image_url) {
+    openGraph.images = [
+      {
+        url: post.image_url,
+        width: 1200,
+        height: 630,
+        alt: post.title,
       }
-    }
-
-    loadPost()
-
-    return () => {
-      isMounted = false
-    }
-  }, [slug])
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-white py-20 flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-[#0a3d62]" />
-      </div>
-    )
+    ]
+    twitter.images = [post.image_url]
   }
 
-  if (notFoundFlag || !post) {
-    return (
-      <div className="min-h-screen bg-white py-20">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="mb-4 text-3xl font-bold text-[#0a3d62]">
-            Post Not Found
-          </h1>
-          <p className="mb-6 text-gray-600">
-            The blog post you&apos;re looking for doesn&apos;t exist or is not published.
-          </p>
-          <Link href="/blog">
-            <Button className="bg-[#0a3d62] hover:bg-[#1a5f8a]">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Blog
-            </Button>
-          </Link>
-        </div>
-      </div>
-    )
+  return {
+    title,
+    description,
+    authors: [{ name: post.author || 'Sapwebs Team' }],
+    openGraph,
+    twitter,
+    alternates: {
+      canonical: url,
+    }
   }
+}
+
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const post = await getBlogBySlug(slug)
+
+  if (!post) {
+    notFound()
+  }
+
+  // Construct absolute URL for the share component
+  const postUrl = `https://sapwebs.com/blog/${slug}`
 
   return (
     <div className="min-h-screen bg-white">
@@ -96,7 +79,7 @@ export default function BlogPostPage() {
         <div className="container mx-auto px-4">
           <Link
             href="/blog"
-            className="mb-4 inline-flex items-center gap-2 text-[#0a3d62] hover:text-[#1a5f8a]"
+            className="mb-4 inline-flex items-center gap-2 text-[#0a3d62] hover:text-[#1a5f8a] transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Blog
@@ -143,12 +126,16 @@ export default function BlogPostPage() {
             </div>
           )}
           
-          <div className="prose prose-lg max-w-none prose-headings:text-[#0a3d62] prose-headings:mt-8 prose-headings:mb-4 prose-a:text-blue-600">
+          {/* Main article content */}
+          <article className="prose prose-lg max-w-none prose-headings:text-[#0a3d62] prose-headings:mt-8 prose-headings:mb-4 prose-a:text-[#87ceeb] hover:prose-a:text-[#0a3d62] prose-a:transition-colors prose-strong:text-[#0a3d62]">
             <div 
               className="text-gray-700 leading-relaxed whitespace-pre-wrap font-sans"
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
-          </div>
+          </article>
+          
+          {/* Social Share Box */}
+          <SocialShare url={postUrl} title={post.title} />
 
           <div className="mt-12 border-t border-[#87ceeb]/20 pt-8">
             <Link href="/blog">
