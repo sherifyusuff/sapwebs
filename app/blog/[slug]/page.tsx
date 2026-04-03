@@ -133,9 +133,19 @@ export default function BlogPostPage() {
 
       <div className="py-12 sm:py-16">
         <div className="container mx-auto max-w-4xl px-4">
-          <div className="prose prose-lg max-w-none prose-headings:text-[#0a3d62] prose-a:text-blue-600">
+          {post.image_url && (
+            <div className="mb-12 overflow-hidden rounded-2xl shadow-xl border border-gray-100">
+              <img
+                src={post.image_url}
+                alt={post.title}
+                className="w-full h-auto object-cover max-h-[500px]"
+              />
+            </div>
+          )}
+          
+          <div className="prose prose-lg max-w-none prose-headings:text-[#0a3d62] prose-headings:mt-8 prose-headings:mb-4 prose-a:text-blue-600">
             <div 
-              className="space-y-6 text-gray-700 leading-relaxed"
+              className="text-gray-700 leading-relaxed whitespace-pre-wrap font-sans"
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
           </div>
