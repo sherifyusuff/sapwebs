@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
     console.log('[Contact API] Saving to database...')
     const fullMessage = `[Service: ${sanitizedService}]\n\n${sanitizedMessage}`
 
-    const { data: dbData, error: dbError } = await supabaseAdmin.from('contact_messages').insert([{
+    const { data: dbData, error: dbError } = await supabaseAdmin.from('contacts').insert([{
       name: sanitizedName,
       email,
       phone: phone || null,

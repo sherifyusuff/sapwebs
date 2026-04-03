@@ -90,16 +90,26 @@ export function Contact() {
         body: JSON.stringify(formData),
       })
 
+      const contentType = response.headers.get("content-type");
+      let data;
+      if (contentType && contentType.includes("application/json")) {
+        data = await response.json();
+      } else {
+        const text = await response.text();
+        console.error("Non-JSON Server Error:", text);
+        data = { error: "An unexpected server error occurred." };
+      }
+
       if (response.ok) {
         toast.success("Message sent successfully!", {
           description: "Our team will reach out to you within 24 hours."
         })
         setFormData({ name: '', email: '', phone: '', service: '', message: '' })
       } else {
-        const data = await response.json()
-        toast.error("Failed to send", { description: data.error })
+        toast.error("Failed to send", { description: data.error || "An error occurred." })
       }
     } catch (error) {
+      console.error("Fetch Error:", error);
       toast.error("Network Error", { description: "Check your connection and try again." })
     } finally {
       setIsSubmitting(false)

@@ -112,7 +112,7 @@ export async function adminGetContacts(filters?: {
   limit?: number
   offset?: number
 }) {
-  let query = supabaseAdmin.from("contact_messages").select("*", { count: "exact" })
+  let query = supabaseAdmin.from("contacts").select("*", { count: "exact" })
 
   if (filters?.limit) {
     query = query.limit(filters.limit)
@@ -132,7 +132,7 @@ export async function adminGetContacts(filters?: {
 
 export async function adminUpdateContactStatus(id: string, status: "read" | "unread") {
   const { data, error } = await supabaseAdmin
-    .from("contact_messages")
+    .from("contacts")
     .update({ status })
     .eq("id", id)
     .select()
@@ -145,7 +145,7 @@ export async function adminUpdateContactStatus(id: string, status: "read" | "unr
 }
 
 export async function adminDeleteContact(id: string) {
-  const { error } = await supabaseAdmin.from("contact_messages").delete().eq("id", id)
+  const { error } = await supabaseAdmin.from("contacts").delete().eq("id", id)
   if (error) throw error
   revalidatePath("/admin")
   revalidatePath("/admin/messages")
