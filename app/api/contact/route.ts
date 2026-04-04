@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { z } from 'zod'
-import DOMPurify from 'isomorphic-dompurify'
 import { supabaseAdmin } from '@/lib/supabase-server'
+
+export const dynamic = 'force-dynamic'
 
 // Validation Schema
 const ContactSchema = z.object({
@@ -71,18 +72,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true, message: 'Message sent successfully.' })
     }
 
-    // 4. Sanitization (Protect against XSS)
-    const sanitizedName = DOMPurify.sanitize(name)
-    const sanitizedMessage = DOMPurify.sanitize(message)
-    const sanitizedService = DOMPurify.sanitize(service)
-
-    // 5. Database Insertion (Parameterized via Supabase Client)
+    // 4. Database Insertion (Parameterized via Supabase Client - natively safe from SQL injection)
     console.log('[Contact API] Saving to database...')
-    const fullMessage = `[Service: ${sanitizedService}]\n\n${sanitizedMessage}`
+    const fullMessage = `[Service: ${service}]\n\n${message}`
 
     const { data: dbData, error: dbError } = await supabaseAdmin.from('contacts').insert([{
-      name: sanitizedName,
-      email,
+      name: name,
+      email: email,
       phone: phone || null,
       message: fullMessage,
       status: 'unread'
@@ -92,17 +88,17 @@ export async function POST(request: NextRequest) {
       console.error('[Contact API] Database Error:', dbError)
     }
 
-    // 6. Email Notification (Resend)
+    // 5. Email Notification (Resend)
     let emailSent = false
     if (resend) {
       try {
         const adminEmailHtml = `
           <div style="font-family: sans-serif; max-width: 600px; color: #333;">
-            <h2 style="color: #0a3d62;">New Secure Inquiry: ${sanitizedService}</h2>
-            <p><strong>From:</strong> ${sanitizedName} (${email})</p>
+            <h2 style="color: #0a3d62;">New Secure Inquiry: ${service}</h2>
+            <p><strong>From:</strong> ${name} (${email})</p>
             <p><strong>Phone:</strong> ${phone || 'N/A'}</p>
             <div style="background: #f4f4f4; padding: 15px; border-radius: 5px; margin-top: 15px;">
-              <p style="white-space: pre-wrap;">${sanitizedMessage}</p>
+              <p style="white-space: pre-wrap;">${message}</p>
             </div>
           </div>
         `
@@ -110,7 +106,7 @@ export async function POST(request: NextRequest) {
         await resend.emails.send({
           from: 'Sapwebs Notifications <onboarding@resend.dev>',
           to: ADMIN_EMAIL,
-          subject: `Secure Contact: ${sanitizedService} from ${sanitizedName}`,
+          subject: `Secure Contact: ${service} from ${name}`,
           html: adminEmailHtml,
           replyTo: email
         })
@@ -120,7 +116,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 7. Final Response
+    // 6. Final Response
     if (dbError && !emailSent) {
       return NextResponse.json({ error: 'System busy. Please try again.' }, { status: 500 })
     }

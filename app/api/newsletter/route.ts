@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { z } from 'zod'
-import DOMPurify from 'isomorphic-dompurify'
+
+export const dynamic = 'force-dynamic'
+
+// Simple sanitization - strip HTML tags (safe for validated email strings)
+const sanitize = (str: string) => str.replace(/<[^>]*>/g, '').trim()
 
 // Configuration
 const RESEND_API_KEY = process.env.RESEND_API_KEY
@@ -56,7 +60,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { email } = result.data
-    const sanitizedEmail = DOMPurify.sanitize(email)
+    const sanitizedEmail = sanitize(email)
 
     // 4. Send confirmation email to subscriber
     const subscriberEmailHtml = `
