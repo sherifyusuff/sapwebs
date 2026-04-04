@@ -66,14 +66,14 @@ export function Footer() {
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-5">
           {/* Brand */}
           <div className="sm:col-span-2">
-            <Link href="/" className="inline-block">
+            <Link href="/" className="inline-block transition-transform duration-300 hover:scale-[1.02]">
               <Image
                 src="/sapwebs-logo.png"
-                alt="Sapwebs Logo"
+                alt="Sapwebs - Crafting Digital Excellence"
                 width={400}
                 height={120}
-                className="h-20 brightness-125 saturate-125 drop-shadow-lg sm:h-28"
-                style={{ width: 'auto', height: undefined }}
+                className="h-20 brightness-110 drop-shadow-lg sm:h-24"
+                style={{ width: 'auto' }}
               />
             </Link>
             <p className="mt-3 max-w-sm text-sm text-white/70 sm:mt-4 sm:text-base">

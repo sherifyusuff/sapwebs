@@ -33,16 +33,16 @@ export function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-[#87ceeb]/40 bg-gradient-to-r from-[#e0f2fc] via-[#eaf6fd] to-[#d6eefb] shadow-md shadow-[#87ceeb]/10 backdrop-blur-md transition-all duration-300">
-      <div className="container mx-auto flex h-22 items-center justify-between px-3 sm:h-26 md:h-30 lg:h-34 md:px-4">
+    <header className="sticky top-0 z-50 w-full border-b border-[#87ceeb]/30 bg-gradient-to-r from-[#e0f2fc] via-[#eaf6fd] to-[#d6eefb]/95 shadow-[0_2px_20px_-4px_rgba(10,61,98,0.12)] backdrop-blur-lg transition-all duration-300">
+      <div className="container mx-auto flex items-center justify-between px-4 py-2 sm:py-2.5 md:px-6">
         {/* Logo */}
-        <Link href="/" className="flex shrink-0 items-center transition-transform duration-300 hover:scale-105">
+        <Link href="/" className="group flex shrink-0 items-center gap-3 transition-all duration-300 hover:opacity-90">
           <Image
             src="/sapwebs-logo.png"
-            alt="Sapwebs Logo"
+            alt="Sapwebs - Crafting Digital Excellence"
             width={720}
             height={216}
-            className="h-16 drop-shadow-lg sm:h-20 md:h-24 lg:h-28"
+            className="h-20 drop-shadow-md transition-transform duration-300 group-hover:scale-[1.02] sm:h-24 md:h-[6.5rem] lg:h-28"
             style={{ width: 'auto' }}
             priority
             loading="eager"
@@ -50,7 +50,7 @@ export function Header() {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden items-center gap-1 lg:flex">
+        <nav className="hidden items-center gap-0.5 lg:flex xl:gap-1">
           {navLinks.map((link, index) => {
             if (link.key === "nav.services") {
               return <ServicesDropdown key={link.key} />
@@ -59,12 +59,12 @@ export function Header() {
               <Link
                 key={link.key}
                 href={link.href}
-                className="group relative rounded-full px-5 py-2.5 text-sm font-semibold text-[#0a3d62] transition-all duration-300 hover:text-[#0a3d62]"
+                className="group relative rounded-full px-4 py-2.5 text-[0.9rem] font-semibold tracking-tight text-[#0a3d62] transition-all duration-300 hover:text-[#0a3d62] xl:px-5"
               >
                 {t(link.key)}
-                <span className="absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-[#87ceeb] to-[#0a3d62] rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
+                <span className="absolute inset-x-2 bottom-0.5 h-[2px] rounded-full bg-gradient-to-r from-[#87ceeb] to-[#0a3d62] scale-x-0 transition-transform duration-500 origin-left group-hover:scale-x-100" />
                 <span className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{
-                  background: 'radial-gradient(circle, rgba(135, 206, 235, 0.1) 0%, transparent 70%)',
+                  background: 'radial-gradient(circle, rgba(135, 206, 235, 0.08) 0%, transparent 70%)',
                 }} />
               </Link>
             )
@@ -72,18 +72,18 @@ export function Header() {
           <LanguageDropdown variant="desktop" />
           <Button
             onClick={handleContactClick}
-            className="ml-3 rounded-full bg-[#0a3d62] px-7 py-2.5 font-semibold text-white shadow-lg shadow-[#0a3d62]/25 transition-all duration-300 hover:bg-[#1a5f8a] hover:shadow-xl hover:-translate-y-0.5 active:scale-95"
+            className="ml-2 rounded-full bg-[#0a3d62] px-6 py-2.5 text-sm font-bold tracking-wide text-white shadow-lg shadow-[#0a3d62]/20 transition-all duration-300 hover:bg-[#1a5f8a] hover:shadow-xl hover:-translate-y-0.5 active:scale-95 xl:ml-4 xl:px-8"
           >
             {t("nav.quote")}
           </Button>
         </nav>
 
         {/* Mobile: Language + Menu */}
-        <div className="flex items-center gap-2 lg:hidden">
+        <div className="flex items-center gap-2.5 lg:hidden">
           <LanguageDropdown variant="desktop" />
           <button
             type="button"
-            className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#87ceeb]/15 transition-all duration-300 hover:bg-[#87ceeb]/30 hover:scale-110 active:scale-95 sm:h-10 sm:w-10"
+            className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#87ceeb]/20 bg-white/60 shadow-sm transition-all duration-300 hover:bg-[#87ceeb]/20 hover:shadow-md hover:scale-105 active:scale-95 sm:h-11 sm:w-11"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
           >
