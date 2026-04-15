@@ -1,0 +1,35 @@
+name: Keep Supabase Alive
+
+on:
+  # Run every 4 days at 08:00 UTC (well within the 7-day inactivity window)
+  schedule:
+    - cron: '0 8 */4 * *'
+  # Allow manual trigger from GitHub Actions UI
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase keep-alive endpoint
+        run: |
+          echo "Pinging Supabase keep-alive endpoint..."
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "${{ secrets.SITE_URL }}/api/keep-alive")
+
+          echo "Response status: $RESPONSE"
+
+          if [ "$RESPONSE" -eq 200 ]; then
+            echo "✅ Supabase is alive!"
+          else
+            echo "❌ Ping failed with status $RESPONSE"
+            # Also try without auth in case CRON_SECRET is not set
+            RESPONSE2=$(curl -s -o /dev/null -w "%{http_code}" \
+              "${{ secrets.SITE_URL }}/api/keep-alive")
+            echo "Retry without auth - status: $RESPONSE2"
+            if [ "$RESPONSE2" -ne 200 ]; then
+              exit 1
+            fi
+            echo "✅ Supabase is alive (no auth)!"
+          fi
