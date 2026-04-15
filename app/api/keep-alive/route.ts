@@ -5,7 +5,15 @@ import { createClient } from "@supabase/supabase-js";
 // from being paused due to inactivity (Supabase pauses after 7 days).
 // Called by GitHub Actions every 4 days.
 
-export async function GET() {
+export async function GET(request: Request) {
+  // Optional: verify a secret token to prevent abuse
+  const authHeader = request.headers.get("authorization");
+  const cronSecret = process.env.CRON_SECRET;
+
+  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
