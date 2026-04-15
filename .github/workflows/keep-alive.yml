@@ -12,24 +12,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Ping Supabase keep-alive endpoint
+        env:
+          SITE_URL: ${{ secrets.SITE_URL }}
         run: |
           echo "Pinging Supabase keep-alive endpoint..."
-          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
-            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
-            "${{ secrets.SITE_URL }}/api/keep-alive")
+          echo "URL: ${SITE_URL}/api/keep-alive"
 
-          echo "Response status: $RESPONSE"
+          RESPONSE=$(curl -s -w "\n%{http_code}" "${SITE_URL}/api/keep-alive")
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
 
-          if [ "$RESPONSE" -eq 200 ]; then
+          echo "Response status: $HTTP_CODE"
+          echo "Response body: $BODY"
+
+          if [ "$HTTP_CODE" -eq 200 ]; then
             echo "✅ Supabase is alive!"
           else
-            echo "❌ Ping failed with status $RESPONSE"
-            # Also try without auth in case CRON_SECRET is not set
-            RESPONSE2=$(curl -s -o /dev/null -w "%{http_code}" \
-              "${{ secrets.SITE_URL }}/api/keep-alive")
-            echo "Retry without auth - status: $RESPONSE2"
-            if [ "$RESPONSE2" -ne 200 ]; then
-              exit 1
-            fi
-            echo "✅ Supabase is alive (no auth)!"
+            echo "❌ Ping failed with status $HTTP_CODE"
+            exit 1
           fi
